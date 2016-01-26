@@ -1,5 +1,6 @@
 package edu.unc.chongrui.assignment1;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -7,8 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,20 +25,25 @@ public class MainActivity extends AppCompatActivity {
     private int[] board;
     private int count;
 
+    private List<List<Integer>> res = new ArrayList<>();
+    private int default_solution_id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         setHeading();
         setProperties();
         buildBoard();
-
         registerListeners();
     }
 
+    ////////////////////////////////////////
+    // Initialization
+    ////////////////////////////////////////
     private void setHeading(){
         // TextView head = new TextView(this);
         // TextView head = (TextView) gl.getChildAt(0);
@@ -68,11 +76,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void buildBoard(){
         // build/reset the chessboard
-        // reset class members
+        // reset board record and count
         this.board = new int[8];
         Arrays.fill(board, -1);
         this.count = 0;
-        // re-paint the chessboard
+
+        this.default_solution_id = 0;
+        this.res.clear();
+
+        // re-paint the buttons on chessboard
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
                 // buttons[i][j].setBackgroundColor(Color.rgb(204, 102, 0));
@@ -88,23 +100,28 @@ public class MainActivity extends AppCompatActivity {
         // register action listeners to buttons on board
         for(int i = 0; i < 8; i++){
             for(int j = 0; j < 8; j++){
-                buttons[i][j].setOnClickListener(new View.OnClickListener(){
+                buttons[i][j].setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) { onClickBoard(v); }
+                    public void onClick(View v) {
+                        onClickBoard(v);
+                    }
                 });
             }
         }
     }
 
+    ////////////////////////////////////////
+    // Utility for Actions of Clicking on Board
+    ////////////////////////////////////////
     public void onClickBoard(View v){
         // store original state of currently clicked button;
         // check if cur cell is placed or valid;
         // once placed, ignore invalid cells while can still replace cur;
         Log.v("Heading", v.getId() + "");
         ImageButton btn = (ImageButton) findViewById(v.getId());
-        // int tmp = ((ColorDrawable) btn.getBackground()).getColor();
         int index = btn.getId();
         @DrawableRes int tmp = getColorResource(index);
+        // not working: tmp = ((ColorDrawable) btn.getBackground()).getColor();
 
         /* already placed a Queen, remove it from board */
         if(! v.getTag().equals("1")){
@@ -154,16 +171,29 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    ////////////////////////////////////////
+    // Utility for Giving Up
+    ////////////////////////////////////////
     public void onClickGiveUp(View v){
+        // version 1: map only the first solution if exists;
+        // version 2: when clicking 'Give Up',
+        // will display 1) # of possible solutions; 2) which solution to choose;
+        // BZ: once have seen a solution, cannot give up again!
+        if(this.default_solution_id == -1) return;
+        // BZ: clear res by every click of 'Give Up'
+        this.res.clear();
+        solveQueens(7, this.res);
         // BZ: what if no solutions are available under current status?
-        List<List<Integer>> res = new ArrayList<>();
-        solveQueens(7, res);
-        if(! res.isEmpty()) mapBoardToGrids(res.get(0));
-        else showMsg("No solutions possible");
-        Log.v("Giveup", "count="+count);
+        if(this.res.size() == 0){
+            showMsg("Game Over.");
+            return;
+        }
+        // mapBoardToGrids(res.get(this.default_solution_id));
+        chooseOptionsFromResults();
     }
     private void solveQueens(int row, List<List<Integer>> res){
-        // solve 8-Queens recursively on current row
+        // solve 8-Queens recursively on current row;
+        // store all possible solutions into `res` list
         if(row < 0) {
             List<Integer> tmp = new ArrayList<>();
             for(int cell : board) tmp.add(cell);
@@ -184,15 +214,56 @@ public class MainActivity extends AppCompatActivity {
             board[row] = -1;
         }
     }
-    private void mapBoardToGrids(List<Integer> board){
-        // map current status of board to bg resources on buttons
+    private void chooseOptionsFromResults(){
+        // Show a Number Picker to choose options of solutions;
+        // http://stackoverflow.com/questions/17944061
+        // BZ: dialog is accessed by inner class; needs to be final
+        final Dialog dialog = new Dialog(MainActivity.this);
+        dialog.setTitle("Choose Solution from " + this.count + " Options:");
+        dialog.setContentView(R.layout.dialogue_main);
+        final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.np);
+        np.setMinValue(0);
+        np.setMaxValue(this.res.size() - 1);
+        np.setWrapSelectorWheel(false);
+        np.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                Log.v("NumberPicker", newVal + "");
+                MainActivity.this.default_solution_id = newVal;
+            }
+        });
+        Button btn_set = (Button) dialog.findViewById(R.id.btn_set);
+        Button btn_cancel = (Button) dialog.findViewById(R.id.btn_cancel);
+        btn_set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(MainActivity.this.res.isEmpty()) return;
+                dialog.dismiss();
+                // BZ: after choosing another solution, refresh board
+                mapBoardToGrids(MainActivity.this.res.
+                        get(MainActivity.this.default_solution_id));
+                MainActivity.this.default_solution_id = -1;
+            }
+        });
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+    private void mapBoardToGrids(List<Integer> solution){
+        // map current status of board to bg resources on buttons;
+        // for version 2, cannot change after choosing a solution;
+        // ***after all Queens are filled, no replacement can occur
         for(int i = 0; i < 8; i++){
-            int index = i * 8 + board.get(i);
-            ImageButton btn = (ImageButton) findViewById(index);
-            btn.setBackgroundResource(R.drawable.crown);
+            int index = i * 8 + solution.get(i);
+            ImageButton button = (ImageButton) findViewById(index);
+            button.setBackgroundResource(R.drawable.crown);
+            button.setTag("2");  // BZ: cannot replace the Queen
             // BZ: this.board may have been covered by later solutions
-            // after all Queens are filled, no replacement can occur
-            this.board[i] = board.get(i);
+            this.board[i] = solution.get(i);
         }
         showMsg("Solutions are on the board");
     }
