@@ -8,4 +8,5 @@
     <string name="btn_reset_label">"RESET"</string>
     <string name="np_set_label">"SET"</string>
     <string name="np_cancel_label">"Cancel"</string>
+    <string name="options_count">"# of Options: %1$d"</string>
 </resources>

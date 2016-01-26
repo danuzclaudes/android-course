@@ -182,8 +182,9 @@ public class MainActivity extends AppCompatActivity {
         // will display 1) # of possible solutions; 2) which solution to choose;
         // BZ: once have seen a solution, cannot give up again!
         if(this.default_solution_id == -1) return;
-        // BZ: clear res by every click of 'Give Up'
+        // BZ: clear res and count by every click of 'Give Up'
         this.res.clear();
+        this.count = 0;
         solveQueens(7, this.res);
         // BZ: what if no solutions are available under current status?
         if(this.res.size() == 0){
@@ -221,8 +222,9 @@ public class MainActivity extends AppCompatActivity {
         // http://stackoverflow.com/questions/17944061
         // BZ: dialog is accessed by inner class; needs to be final
         final Dialog dialog = new Dialog(MainActivity.this);
-        dialog.setTitle("Choose Solution from " + this.count + " Options:");
+        // dialog.setTitle("Choose " + this.count + " Options:");
         dialog.setContentView(R.layout.dialogue_main);
+        dialog.setTitle("Choose ");
         final NumberPicker np = (NumberPicker) dialog.findViewById(R.id.np);
         np.setMinValue(0);
         np.setMaxValue(this.res.size() - 1);
@@ -240,11 +242,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(MainActivity.this.res.isEmpty()) return;
-                dialog.dismiss();
                 // BZ: after choosing another solution, refresh board
-                mapBoardToGrids(MainActivity.this.res.
-                        get(MainActivity.this.default_solution_id));
+                mapBoardToGrids(MainActivity.this.res.get(
+                                MainActivity.this.default_solution_id));
                 MainActivity.this.default_solution_id = -1;
+                dialog.dismiss();
             }
         });
         btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -253,6 +255,17 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+
+        // show # of options available to choose
+        Log.v("Giveup", this.count + "");
+        String showOptions = String.format(
+            getResources().getString(R.string.options_count),
+            this.count
+        );
+        // BZ: not this.findViewById; should be dialog's
+        final TextView notes = (TextView)
+                dialog.findViewById(R.id.options_count);
+        notes.setText(showOptions);
         dialog.show();
     }
     private void mapBoardToGrids(List<Integer> solution){
