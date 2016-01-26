@@ -15,7 +15,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="COMP 790-Mobile Computing-A1 Chongrui Zhang"
+        android:text="@string/heading"
         android:id="@+id/heading" />
     <GridLayout
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Give Up: show remaining solutions on board if there exist."
+        android:text="@string/note1"
         android:id="@+id/note1"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="90dp"/>
@@ -38,17 +38,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset: clear the board."
-        android:id="@+id/note3"
+        android:text="@string/note2"
+        android:id="@+id/note2"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="70dp"/>
 
     <Button
         android:layout_width="100dp"
         android:layout_height="50dp"
+        android:text="@string/btn_giveup_label"
         android:id="@+id/btn_giveup"
         android:onClick="onClickGiveUp"
-        android:text="Give Up"
         android:layout_alignParentBottom="true" />
 
     <Button
@@ -56,7 +56,7 @@
         android:layout_height="50dp"
         android:id="@+id/btn_reset"
         android:onClick="onClickReset"
-        android:text="Reset"
+        android:text="@string/btn_reset_label"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 

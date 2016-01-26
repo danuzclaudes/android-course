@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="shiwei.lab2.MainActivity">
+    <include layout="@layout/content_main" />
+    <!-- BZ: must include content_main
+        http://stackoverflow.com/questions/32880722
+        activity_main.xml: determine how the look of the main activity should be.
+        content_main.xml: determine the contents in the activity_main.xml.
+        content_main.xml will contain the textview, edittext, button etc component.
+        content_main.xml will be included by the activity_main.xml. -->
+
+</android.support.design.widget.CoordinatorLayout>

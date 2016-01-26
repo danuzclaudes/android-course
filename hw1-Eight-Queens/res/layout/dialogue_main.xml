@@ -15,15 +15,15 @@
         android:id="@+id/btn_set"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="Set"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:text="@string/np_set_label" />
 
     <Button
         android:id="@+id/btn_cancel"
         android:layout_width="100dp"
         android:layout_height="50dp"
-        android:text="Cancel"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:text="@string/np_cancel_label" />
 
 </RelativeLayout>

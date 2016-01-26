@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">Assignment1</string>
     <string name="action_settings">Settings</string>
-    <!--<string name="note"></string>-->
+    <string name="heading">"COMP 790-Mobile Computing-A1 Chongrui Zhang"</string>
+    <string name="note1">"Give Up: show remaining solutions on board if there exists one."</string>
+    <string name="note2">"Reset: clear the board."</string>
+    <string name="btn_giveup_label">"GIVE UP"</string>
+    <string name="btn_reset_label">"RESET"</string>
+    <string name="np_set_label">"SET"</string>
+    <string name="np_cancel_label">"Cancel"</string>
 </resources>

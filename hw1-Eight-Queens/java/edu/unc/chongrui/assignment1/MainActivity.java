@@ -92,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 buttons[i][j].setBackgroundResource(
                         (i + j) % 2 == 0 ? R.color.cellEven : R.color.cellOdd
                 );
+                // BZ: should also reset all tags for buttons
+                buttons[i][j].setTag("1");
             }
         }
     }
