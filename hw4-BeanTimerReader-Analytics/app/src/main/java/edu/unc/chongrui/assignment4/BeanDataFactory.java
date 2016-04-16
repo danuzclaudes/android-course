@@ -1,6 +1,6 @@
 package edu.unc.chongrui.assignment4;
 
-import android.os.Environment;
+import android.app.Activity;
 import android.util.Log;
 
 import java.io.BufferedWriter;
@@ -21,11 +21,13 @@ import java.util.List;
  * writeBeanData:           Save the list of data into files on sdcard.
  */
 public class BeanDataFactory {
-    private BeanDataBackgroundReader_Thread bgReader;
+    private Activity activity;
+    private BackgroundBeanDataReader_Thread bgReader;
     private List<BeanData> listOfData;
 
-    public BeanDataFactory() {
+    public BeanDataFactory(Activity activity) {
         _initializeListReader();
+        this.activity = activity;
     }
 
     /**
@@ -45,7 +47,7 @@ public class BeanDataFactory {
     }
 
     private void _initializeListReader() {
-        bgReader = new BeanDataBackgroundReader_Thread(this);
+        bgReader = new BackgroundBeanDataReader_Thread(this);
         listOfData = new ArrayList<>();
     }
 
@@ -77,33 +79,50 @@ public class BeanDataFactory {
     public void writeBeanData(String activityName, String beanLocation) {
         if (listOfData.isEmpty()) return;
         BufferedWriter bufferedWriter;
-        int bucketSize = listOfData.size() / 10;
-        Log.v("BEAN", "Total: " + listOfData.size() + " Bucket size: " + bucketSize);
+        int bucketSize = listOfData.size() / Constants.NUM_DATA_FILES;
+        Log.v("BEAN", "Total: " + listOfData.size() + "; Bucket size: " + bucketSize);
         Iterator<BeanData> listIterator = listOfData.iterator();
         try {
             /* BZ: permission to write file to sdcard */
             /* http://www.stackoverflow.com/a/2122304 */
             /* http://www.stackoverflow.com/a/3551906 */
-            File sdcard = Environment.getExternalStorageDirectory();
-            File myDir = new File(sdcard.getAbsolutePath() + "/a4");
-            Log.v("BEAN", myDir.getAbsolutePath());
-            if (! myDir.exists()) myDir.mkdirs();
+            /* https://stackoverflow.com/q/32635704 */
+
+            File myDir = new File(
+                    // Environment.getExternalStorageDirectory()
+                    System.getenv("EXTERNAL_STORAGE") + Constants.DATAFOLDER);
+            boolean dirCreated = true, fileCreated = true;
+            if (!myDir.exists()) {
+                Log.v("BEAN", "Creating data folder " + myDir.getPath() + " ...");
+                dirCreated = myDir.mkdirs();
+            }
+            // Check availability of directory
+            if (dirCreated)
+                Log.v("BEAN", myDir.getName() + " is created...");
+            else {
+                Log.v("BEAN", "Failed to create " + myDir.getAbsolutePath() + " ...");
+                return;
+            }
 
             try {
                 // Generate 10 files for each Activity_Location combination
-                for (int i = 1; i <= 10; i++) {
+                for (int i = 1; i <= Constants.NUM_DATA_FILES; i++) {
                     File myFile = new File(
                             myDir,
                             activityName + "_" + beanLocation + "_" + i + ".txt");
                     bufferedWriter = new BufferedWriter(
                             new OutputStreamWriter(new FileOutputStream(myFile)));
-                    myFile.createNewFile();
+                    fileCreated = myFile.createNewFile();
+                    if (! fileCreated) {
+                        Log.v("BEAN", "Failed to create " + myFile.getName() + " ...");
+                        // continue;
+                    }
 
                     // Write # of M data into the 10 files by
                     // either bucketizing every M / 10 lines into a new file,
                     // or writing the rest of rows by last file
-                    for (int j = 1; i < 10 && j <= bucketSize ||
-                            i == 10 && listIterator.hasNext(); j++) {
+                    for (int j = 1; i < Constants.NUM_DATA_FILES && j <= bucketSize ||
+                            i == Constants.NUM_DATA_FILES && listIterator.hasNext(); j++) {
                         /* BZ: missing i == 10? */
                         /* What if i < 10 but over bucket size, still has next... */
                         BeanData tmp = listIterator.next();
@@ -118,7 +137,7 @@ public class BeanDataFactory {
                     bufferedWriter.close();
                 }
             } catch (IOException ioexception) {
-                Log.v("BEAN", "Exception on writing new file.");
+                Log.v("BEAN", "Exception on writing new file...");
                 ioexception.printStackTrace();
             }
 
@@ -132,4 +151,7 @@ public class BeanDataFactory {
     public int getSize() {
         return listOfData.size();
     }
+
+    public Activity getActivity() { return activity; }
+
 }

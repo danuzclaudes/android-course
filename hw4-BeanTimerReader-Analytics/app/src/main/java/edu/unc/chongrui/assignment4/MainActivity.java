@@ -1,8 +1,12 @@
 package edu.unc.chongrui.assignment4;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -23,10 +27,16 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private AsyncTimer timer;
     private BeanDataFactory factory;
-    private DataAnalysisFactory dataAnalysisFactory;
     private double elapsedTime;
     private StringBuilder activityName, beanLocation;
     private TextView timerText;
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,11 +45,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        verifyStoragePermissions(this);
+
         activityName = new StringBuilder();
         beanLocation = new StringBuilder();
-        dataAnalysisFactory = new DataAnalysisFactory();
         elapsedTime = 0.0;
-        factory = new BeanDataFactory();
+        factory = new BeanDataFactory(this);
         timerText = (TextView) findViewById(R.id.timer);
     }
 
@@ -79,10 +90,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickSave(View view) {
-        showMsg("SAVE");
+        // showMsg("SAVE");
         /* BZ: reset if start again without saving */
         if(! timer.isCancelled()) _resetTimer();
         factory.writeBeanData(activityName.toString(), beanLocation.toString());
+        showMsg("SAVED");
     }
 
     private void _resetTimer() {
@@ -95,8 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickAnalyze(View view) {
-        showMsg("ANALYZE");
-        dataAnalysisFactory.analyze();
+        showMsg("ANALYZING...");
+        new DataAnalysisFactory(this).analyze();
     }
 
     public void showMsg(String msg) {
@@ -114,14 +126,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Log.v("BEAN", "Inside aync task");
+            Log.v("BEAN", "Inside aync Timer task...");
             long start = System.currentTimeMillis();
 
             /* BZ: while(true) */
             /* check if isCancelled() to ensure a task is cancelled */
             while (! isCancelled()) {
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(Constants.TIMER_FREQ);
                 } catch (InterruptedException ie) {
                     ie.printStackTrace();
                 }
@@ -157,7 +169,29 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onCancelled () {
             /* Won't execute this if using while(true) */
-            Log.v("BEAN", "The timer task has been cancelled.");
+            Log.v("BEAN", "The timer task has been cancelled...");
+        }
+    }
+
+    /**
+     * Checks if the app has permission to write to device storage
+     *
+     * If the app does not has permission then the user will be prompted to grant permissions
+     *
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        // Check if we have write permission
+        Log.v("BEAN", "Verifying permissions...");
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            Log.v("BEAN", "Requesting permissions...");
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
         }
     }
 }

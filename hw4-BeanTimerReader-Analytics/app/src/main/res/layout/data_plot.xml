@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ap="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.androidplot.xy.XYPlot
+        android:id="@+id/chart"
+        android:layout_width="700dp"
+        android:layout_height="750dp"
+
+        ap:backgroundColor="#000000"
+        ap:graphBackgroundColor="#000000"
+        ap:gridBackgroundColor="#111111"
+
+        ap:rangeLabel="Value"
+        ap:domainLabel="Second (s)"
+        ap:labelTextSize="7dp"
+        ap:rangeLabelTextSize="7dp"
+        ap:domainLabelTextSize="7dp"
+
+        ap:rangeTickLabelTextSize="3dp"
+        ap:rangeOriginTickLabelTextSize="3dp"
+        ap:domainTickLabelTextSize="3dp"
+        ap:domainOriginTickLabelTextSize="3dp"
+
+        ap:graphMarginTop="3dp"
+        ap:graphMarginBottom="5dp"
+        ap:graphMarginLeft="3dp"
+        ap:graphMarginRight="5dp"
+
+        ap:gridPaddingLeft="3dp"
+        ap:gridPaddingRight="5dp"
+        ap:gridPaddingTop="5dp"
+        ap:gridPaddingBottom="5dp"
+
+        ap:graphDomainLineColor="#FFFFFF"
+        ap:graphDomainLineThickness="1dp"
+        ap:graphRangeLineColor="#FFFFFF"
+        ap:graphRangeLineThickness="1dp"
+
+        ap:legendVisible="false" />
+
+
+</RelativeLayout>

@@ -20,4 +20,7 @@ public class BeanData {
     public double getX() { return x; }
     public double getY() { return y; }
     public double getZ() { return z; }
+    public double getValue() {
+        return Math.sqrt(x * x + y * y + z * z);
+    }
 }
