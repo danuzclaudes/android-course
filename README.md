@@ -15,14 +15,14 @@ This repository contains the code for assignments and labs from my Android cours
 Building Apps: Layouts, Buttons, Images, and Event Handling.
 
 ####hw2-RealTime-SensorPlotter
-+ https://github.com/danuzclaudes/android-course/tree/master/hw2-RealTime-SensorPlotter/app/src/main/java/edu/unc/chongrui/assignment2
++ https://github.com/danuzclaudes/android-course/tree/master/hw2-RealTime-SensorPlotter/java/edu/unc/chongrui/assignment2
 + Plot sensor values, their mean, and their variance over time.
-+ First Activity: https://github.com/danuzclaudes/android-course/tree/master/hw2-RealTime-SensorPlotter/app/src/main/java/edu/unc/chongrui/assignment2/viewer/DashboardActivity.java
++ First Activity: https://github.com/danuzclaudes/android-course/tree/master/hw2-RealTime-SensorPlotter/java/edu/unc/chongrui/assignment2/viewer/DashboardActivity.java
   - The user will be able to choose two types of sensors: Accelerometer & Proximity
   - Display the status of sensors: whether present or not, max range, resolution, min delay
   - When a user selects a sensor, the user will be taken to next activity
 
-+ Second Activity: https://github.com/danuzclaudes/android-course/blob/master/hw2-RealTime-SensorPlotter/app/src/main/java/edu/unc/chongrui/assignment2/viewer/DataPlottingActivity.java
++ Second Activity: https://github.com/danuzclaudes/android-course/blob/master/hw2-RealTime-SensorPlotter/java/edu/unc/chongrui/assignment2/viewer/DataPlottingActivity.java
   - The second activity presents the following on same graph: 10 sensor values, a running mean of the last 10 values, a running standard deviation of last 10 values
   - A deque is used to have at most 10 `ChartData` objects, wrapping sensor value, mean and stddev
   - Every time a new sensor data arrives, the `ChartData` object will be created and current mean/stddev inside the queue will be updated by it. When `onDraw()` is invoked, it will traverse the queue and plot each object.
@@ -55,7 +55,7 @@ Building Apps: Layouts, Buttons, Images, and Event Handling.
     ````
 
 ####hw3-GoogleLocationService-MediaPlayer
-+ https://github.com/danuzclaudes/android-course/tree/master/hw3-GoogleLocationService-MediaPlayer/app/src/main/java/edu/unc/chongrui/assignment3
++ https://github.com/danuzclaudes/android-course/tree/master/hw3-GoogleLocationService-MediaPlayer/java/edu/unc/chongrui/assignment3
 + Display specific songs at given locations
 + Set up Google Maps API key
   - TODO: Before you run your application, you need a Google Maps API key.
@@ -65,7 +65,7 @@ Building Apps: Layouts, Buttons, Images, and Event Handling.
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">Your Public Key Here</string>    TODO: Before you run your application, you need a Google Maps API key.
 
 ####hw4-BeanTimerReader-Analytics
-+ https://github.com/danuzclaudes/android-course/tree/master/hw4-BeanTimerReader-Analytics/app/src/main/java/edu/unc/chongrui/assignment4
++ https://github.com/danuzclaudes/android-course/tree/master/hw4-BeanTimerReader-Analytics/java/edu/unc/chongrui/assignment4
 + Reads in Bean data thru a timer
 + Plots the temporal trends as wearables attached on different parts of body and collected thru different actions
 
